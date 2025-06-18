@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import Index from "./pages/Index";
 import AddSubject from "./pages/AddSubject";
 import AvailableTime from "./pages/AvailableTime";
+import Dashboard from "./pages/Dashboard";
 import Schedule from "./pages/Schedule";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/add-subject" element={<AddSubject />} />
               <Route path="/available-time" element={<AvailableTime />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

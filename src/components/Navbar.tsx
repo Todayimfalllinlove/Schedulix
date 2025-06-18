@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Menu } from "lucide-react";
@@ -12,6 +11,7 @@ const Navbar = () => {
     { path: "/", label: "Home" },
     { path: "/add-subject", label: "Add Subject" },
     { path: "/available-time", label: "Available Time" },
+    { path: "/dashboard", label: "Dashboard" },
     { path: "/schedule", label: "Schedule" },
   ];
 
