@@ -2,19 +2,18 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { BookOpen, Calendar, Clock, Target } from "lucide-react";
+import { Calendar, Clock, Target } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-16">
-        {/* Header */}
+        {/* Hero Section */}
         <div className="text-center mb-16">
-          <div className="flex items-center justify-center mb-6">
-            <BookOpen className="h-12 w-12 text-blue-600 mr-3" />
-            <h1 className="text-4xl font-bold text-gray-900">Auto Study Planner</h1>
-          </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            Smart Study Planning Made Easy
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Create personalized study schedules automatically based on your subjects, 
             available time, and priorities. Study smarter, not harder.
           </p>
