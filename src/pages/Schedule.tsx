@@ -94,6 +94,9 @@ const Schedule = () => {
     setEditingSession(null);
   };
 
+  // Filter out days with no sessions
+  const daysWithSessions = schedule.filter(day => day.sessions.length > 0);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
@@ -122,95 +125,113 @@ const Schedule = () => {
 
         {/* Daily Schedule */}
         <div className="space-y-6 max-w-4xl mx-auto">
-          {schedule.map((day, dayIndex) => (
-            <Card key={day.day} className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold">{day.day}</h3>
-                  <p className="text-sm text-gray-600">{new Date(day.date).toLocaleDateString()}</p>
-                </div>
-                <div className="text-sm text-gray-600">
-                  {day.sessions.length} study session{day.sessions.length !== 1 ? 's' : ''}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {day.sessions.map((session) => (
-                  <div key={session.id} className="flex items-center justify-between p-4 border rounded-lg bg-white hover:shadow-sm transition-shadow">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
-                        <BookOpen className="h-4 w-4 text-blue-600" />
-                        {editingSession === session.id ? (
-                          <input
-                            type="text"
-                            defaultValue={session.subject}
-                            className="font-medium border rounded px-2 py-1"
-                            onBlur={(e) => editSession(dayIndex, session.id, e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                editSession(dayIndex, session.id, e.currentTarget.value);
-                              }
-                              if (e.key === 'Escape') {
-                                setEditingSession(null);
-                              }
-                            }}
-                            autoFocus
-                          />
-                        ) : (
-                          <span className={`font-medium ${session.completed ? 'line-through text-gray-500' : ''}`}>
-                            {session.subject}
-                          </span>
-                        )}
-                      </div>
-                      <Badge className={getPriorityColor(session.priority)}>
-                        {session.priority}
-                      </Badge>
+          {daysWithSessions.length > 0 ? (
+            daysWithSessions.map((day, dayIndex) => {
+              // Find the original index for proper state management
+              const originalDayIndex = schedule.findIndex(originalDay => originalDay.day === day.day);
+              
+              return (
+                <Card key={day.day} className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">{day.day}</h3>
+                      <p className="text-sm text-gray-600">{new Date(day.date).toLocaleDateString()}</p>
                     </div>
-                    
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Clock className="h-4 w-4" />
-                        <span>{session.time}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setEditingSession(session.id)}
-                          disabled={editingSession === session.id}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteSession(dayIndex, session.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant={session.completed ? "default" : "outline"}
-                          size="sm"
-                          className={session.completed ? "bg-green-600 hover:bg-green-700" : ""}
-                          onClick={() => toggleSessionComplete(dayIndex, session.id)}
-                        >
-                          {session.completed ? (
-                            <>
-                              <CheckCircle2 className="h-4 w-4 mr-2" />
-                              Completed
-                            </>
-                          ) : (
-                            "Mark Complete"
-                          )}
-                        </Button>
-                      </div>
+                    <div className="text-sm text-gray-600">
+                      {day.sessions.length} study session{day.sessions.length !== 1 ? 's' : ''}
                     </div>
                   </div>
-                ))}
+
+                  <div className="space-y-3">
+                    {day.sessions.map((session) => (
+                      <div key={session.id} className="flex items-center justify-between p-4 border rounded-lg bg-white hover:shadow-sm transition-shadow">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center space-x-2">
+                            <BookOpen className="h-4 w-4 text-blue-600" />
+                            {editingSession === session.id ? (
+                              <input
+                                type="text"
+                                defaultValue={session.subject}
+                                className="font-medium border rounded px-2 py-1"
+                                onBlur={(e) => editSession(originalDayIndex, session.id, e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    editSession(originalDayIndex, session.id, e.currentTarget.value);
+                                  }
+                                  if (e.key === 'Escape') {
+                                    setEditingSession(null);
+                                  }
+                                }}
+                                autoFocus
+                              />
+                            ) : (
+                              <span className={`font-medium ${session.completed ? 'line-through text-gray-500' : ''}`}>
+                                {session.subject}
+                              </span>
+                            )}
+                          </div>
+                          <Badge className={getPriorityColor(session.priority)}>
+                            {session.priority}
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center space-x-2 text-sm text-gray-600">
+                            <Clock className="h-4 w-4" />
+                            <span>{session.time}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setEditingSession(session.id)}
+                              disabled={editingSession === session.id}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteSession(originalDayIndex, session.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant={session.completed ? "default" : "outline"}
+                              size="sm"
+                              className={session.completed ? "bg-green-600 hover:bg-green-700" : ""}
+                              onClick={() => toggleSessionComplete(originalDayIndex, session.id)}
+                            >
+                              {session.completed ? (
+                                <>
+                                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                                  Completed
+                                </>
+                              ) : (
+                                "Mark Complete"
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              );
+            })
+          ) : (
+            <Card className="p-8 text-center">
+              <div className="space-y-4">
+                <Calendar className="h-12 w-12 text-gray-400 mx-auto" />
+                <h3 className="text-lg font-semibold text-gray-900">No Study Sessions</h3>
+                <p className="text-gray-600">All your study sessions have been completed or removed.</p>
+                <Link to="/add-subject">
+                  <Button>Add New Subject</Button>
+                </Link>
               </div>
             </Card>
-          ))}
+          )}
         </div>
 
         {/* Quick Summary */}
