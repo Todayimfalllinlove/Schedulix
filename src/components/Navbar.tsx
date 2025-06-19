@@ -1,7 +1,9 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Menu } from "lucide-react";
 import { useState } from "react";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
   const location = useLocation();
@@ -16,13 +18,13 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="bg-background shadow-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <BookOpen className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">Auto Study Planner</span>
+            <span className="text-xl font-bold text-foreground">Auto Study Planner</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -34,16 +36,18 @@ const Navbar = () => {
                 className={`text-sm font-medium transition-colors hover:text-blue-600 ${
                   location.pathname === item.path
                     ? "text-blue-600 border-b-2 border-blue-600 pb-1"
-                    : "text-gray-600"
+                    : "text-muted-foreground"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
+            <ThemeToggle />
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          {/* Mobile Menu Button and Theme Toggle */}
+          <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"
@@ -56,7 +60,7 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t bg-white">
+          <div className="md:hidden border-t bg-background">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -64,8 +68,8 @@ const Navbar = () => {
                   to={item.path}
                   className={`block px-3 py-2 text-base font-medium rounded-md transition-colors ${
                     location.pathname === item.path
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                      ? "text-blue-600 bg-blue-50 dark:bg-blue-950"
+                      : "text-muted-foreground hover:text-blue-600 hover:bg-muted"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
