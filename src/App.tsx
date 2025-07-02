@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -13,6 +12,9 @@ import AvailableTime from "./pages/AvailableTime";
 import Dashboard from "./pages/Dashboard";
 import Schedule from "./pages/Schedule";
 import NotFound from "./pages/NotFound";
+import Auth from "./auth/Auth";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Pomodoros from "./pages/Pomodoros";
 
 const queryClient = new QueryClient();
 
@@ -21,17 +23,18 @@ const App = () => (
     <ThemeProvider>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
-        <BrowserRouter>
+        <BrowserRouter future={{ v7_relativeSplatPath: true }}>
           <div className="min-h-screen flex flex-col">
             <Navbar />
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/pomodoros" element={<Pomodoros />} />
                 <Route path="/add-subject" element={<AddSubject />} />
-                <Route path="/available-time" element={<AvailableTime />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/schedule" element={<Schedule />} />
+                <Route path="/available-time" element={<ProtectedRoute><AvailableTime /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/schedule" element={<ProtectedRoute><Schedule /></ProtectedRoute>} />
+                <Route path="/auth" element={<Auth />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

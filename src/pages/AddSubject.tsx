@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Plus, BookOpen } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from '@/lib/supabaseClient';
 
 const AddSubject = () => {
   const navigate = useNavigate();
@@ -19,7 +19,20 @@ const AddSubject = () => {
     deadline: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: subjectsData } = await supabase
+        .from('subjects')
+        .select('*')
+        .eq('user_id', user.id);
+      setSubjects(subjectsData || []);
+    };
+    fetchSubjects();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.estimatedHours || !formData.priority || !formData.deadline) {
       toast({
@@ -30,19 +43,35 @@ const AddSubject = () => {
       return;
     }
 
-    const newSubject = {
-      id: Date.now(),
-      ...formData,
-      estimatedHours: parseInt(formData.estimatedHours)
-    };
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return;
+    }
 
-    setSubjects(prev => [...prev, newSubject]);
-    setFormData({ name: "", estimatedHours: "", priority: "", deadline: "" });
-    
+    const { error } = await supabase.from('subjects').insert([
+      {
+        user_id: user.id,
+        name: formData.name,
+        estimated_hours: parseInt(formData.estimatedHours),
+        priority: formData.priority,
+        deadline: formData.deadline,
+      }
+    ]);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+      return;
+    }
+
     toast({
       title: "Subject Added",
       description: `${formData.name} has been added to your study plan`,
     });
+    navigate("/available-time");
   };
 
   const handleContinue = () => {
@@ -57,42 +86,81 @@ const AddSubject = () => {
     navigate("/available-time");
   };
 
+  // Add a function to delete a subject
+  const handleDeleteSubject = async (id: number) => {
+    const { error } = await supabase
+      .from('subjects')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Remove from local state
+    setSubjects(prev => prev.filter(subject => subject.id !== id));
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100";
+      case "medium": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100";
+      case "low": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100";
+      default: return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100";
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 relative">
+
         {/* Header */}
         <div className="flex items-center mb-8">
-          <Link to="/" className="mr-4">
-            <Button variant="ghost" size="sm">
+          <Link to="/" className="mr-4 hidden sm:inline-flex">
+            <Button variant="ghost" size="sm" className="hover:bg-white/20 dark:hover:bg-gray-800/20">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
           </Link>
           <div className="flex items-center">
-            <BookOpen className="h-6 w-6 text-blue-600 mr-2" />
-            <h1 className="text-2xl font-bold text-gray-900">Add Your Subjects</h1>
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl mr-3 flex items-center justify-center shadow-lg">
+              <BookOpen className="h-5 w-5 text-white" />
+            </div>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Add Your Subjects</h1>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-1 gap-8">
           {/* Add Subject Form */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-6">Add New Subject</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Subject Name</Label>
+          <Card className="p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-2xl">
+            <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">Add New Subject</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Subject Name</Label>
                 <Input
                   id="name"
                   type="text"
                   placeholder="e.g., Mathematics, Biology, History"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="mt-1"
+                  className="h-12 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="hours">Estimated Study Hours</Label>
+              <div className="space-y-2">
+                <Label htmlFor="hours" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Estimated Study Hours</Label>
                 <Input
                   id="hours"
                   type="number"
@@ -100,14 +168,14 @@ const AddSubject = () => {
                   min="1"
                   value={formData.estimatedHours}
                   onChange={(e) => setFormData(prev => ({ ...prev, estimatedHours: e.target.value }))}
-                  className="mt-1"
+                  className="h-12 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="priority">Priority Level</Label>
+              <div className="space-y-2">
+                <Label htmlFor="priority" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Priority Level</Label>
                 <Select onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}>
-                  <SelectTrigger className="mt-1">
+                  <SelectTrigger className="h-12 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
                   <SelectContent>
@@ -118,65 +186,22 @@ const AddSubject = () => {
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="deadline">Deadline</Label>
+              <div className="space-y-2">
+                <Label htmlFor="deadline" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Deadline</Label>
                 <Input
                   id="deadline"
                   type="date"
                   value={formData.deadline}
                   onChange={(e) => setFormData(prev => ({ ...prev, deadline: e.target.value }))}
-                  className="mt-1"
+                  className="h-12 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                 />
               </div>
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Subject
               </Button>
             </form>
-          </Card>
-
-          {/* Added Subjects */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-6">Your Subjects ({subjects.length})</h2>
-            {subjects.length === 0 ? (
-              <div className="text-center text-gray-500 py-8">
-                <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <p>No subjects added yet</p>
-                <p className="text-sm">Add your first subject to get started</p>
-              </div>
-            ) : (
-              <div className="space-y-3 mb-6">
-                {subjects.map((subject) => (
-                  <div key={subject.id} className="p-4 border rounded-lg bg-white">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium">{subject.name}</h3>
-                        <p className="text-sm text-gray-600">
-                          {subject.estimatedHours} hours • {subject.priority} priority
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Due: {new Date(subject.deadline).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        subject.priority === 'high' ? 'bg-red-100 text-red-800' :
-                        subject.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
-                      }`}>
-                        {subject.priority}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            {subjects.length > 0 && (
-              <Button onClick={handleContinue} className="w-full bg-blue-600 hover:bg-blue-700">
-                Continue to Available Time
-              </Button>
-            )}
           </Card>
         </div>
       </div>
