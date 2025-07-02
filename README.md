@@ -3,6 +3,8 @@
 Schedulix is a web application for  study planning.
 It helps you create a personalized study timetable based on your available time and subject priorities.
 
+** Use Lovable for help me in Frontend Design**
+
 ---
 
 ## 🚀 Features
