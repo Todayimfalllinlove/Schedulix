@@ -122,7 +122,7 @@ const Auth = () => {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
             <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-screen">
                 {/* Background decorative elements */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute overflow-hidden pointer-events-none">
                     <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
                     <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
                     <div className="absolute top-40 left-40 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
@@ -132,9 +132,7 @@ const Auth = () => {
                     {/* Logo/Brand Section */}
                     <div className="text-center mb-8">
                         <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
+                            <img src="/Img/logo_white.png" alt="Logo"/>
                         </div>
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             ScheduleFlow
@@ -319,7 +317,7 @@ const Auth = () => {
                     {!session && (
                         <div className="mt-8 text-center">
                             <div className="relative">
-                                <div className="absolute inset-0 flex items-center">
+                                <div className="absolute flex items-center">
                                     <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
                                 </div>
                                 <div className="relative flex justify-center text-sm">

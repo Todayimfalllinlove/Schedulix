@@ -86,26 +86,6 @@ const AddSubject = () => {
     navigate("/available-time");
   };
 
-  // Add a function to delete a subject
-  const handleDeleteSubject = async (id: number) => {
-    const { error } = await supabase
-      .from('subjects')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Remove from local state
-    setSubjects(prev => prev.filter(subject => subject.id !== id));
-  };
-
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100";
@@ -117,6 +97,7 @@ const AddSubject = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden">
+      
       {/* Background decorative elements */}
       <div className="absolute">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
