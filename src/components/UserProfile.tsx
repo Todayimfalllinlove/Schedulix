@@ -159,50 +159,51 @@ const UserProfile = ({ user, profile, setProfile }) => {
     }
 
     return (
-        <Card className="p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-2xl">
-        
+        <Card className="p-4 sm:p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-2xl">
             <CardContent className="px-0 pb-0">
-                <div className="flex items-center space-x-6 mb-8">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start sm:space-x-6 gap-y-4 mb-8">
                     <Avatar className="h-24 w-24 border-4 border-white dark:border-gray-700 shadow-lg">
                         <AvatarImage className="object-cover w-full h-full" src={editableProfile?.avatar_url || "/placeholder.svg" } />
                         <AvatarFallback className="text-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white">
                             {editableProfile?.full_name?.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                     </Avatar>
-                    <div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{editableProfile?.full_name}</h3>
-                        <p className="text-gray-600 dark:text-gray-400 text-lg">{editableProfile?.email}</p>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="mt-3 hover:bg-white/20 dark:hover:bg-gray-800/20"
-                            onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                            disabled={uploading}
-                        >
-                            {uploading ? "Uploading..." : "Change Photo"}
-                        </Button>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            style={{ display: "none" }}
-                            onChange={handleAvatarUpload}
-                        />
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            className="mt-3 ml-3"
-                            onClick={async () => {
-                                await supabase.auth.signOut();
-                                setTimeout(() => navigate("/auth"), 100);
-                            }}
-                        >
-                            Logout
-                        </Button>
+                    <div className="flex flex-col items-center sm:items-start w-full">
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center sm:text-left">{editableProfile?.full_name}</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-lg text-center sm:text-left">{editableProfile?.email}</p>
+                        <div className="flex flex-col sm:flex-row gap-2 mt-3 w-full sm:w-auto">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="hover:bg-white/20 dark:hover:bg-gray-800/20 w-full sm:w-auto"
+                                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                disabled={uploading}
+                            >
+                                {uploading ? "Uploading..." : "Change Photo"}
+                            </Button>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                ref={fileInputRef}
+                                style={{ display: "none" }}
+                                onChange={handleAvatarUpload}
+                            />
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                className="w-full sm:w-auto"
+                                onClick={async () => {
+                                    await supabase.auth.signOut();
+                                    setTimeout(() => navigate("/auth"), 100);
+                                }}
+                            >
+                                Logout
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-2 sm:px-0">
                     <div className="space-y-2">
                         <Label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Full Name</Label>
                         <Input
@@ -242,17 +243,17 @@ const UserProfile = ({ user, profile, setProfile }) => {
                     </div>
                 </div>
 
-                <div className="flex justify-end mt-8 space-x-3">
+                <div className="flex flex-col sm:flex-row justify-end mt-8 space-y-2 sm:space-y-0 sm:space-x-3">
                     <Button
                         variant="outline"
-                        className="hover:bg-white/20 dark:hover:bg-gray-800/20"
+                        className="hover:bg-white/20 dark:hover:bg-gray-800/20 w-full sm:w-auto"
                         onClick={() => setEditableProfile(profile)}
                         disabled={saving}
                     >
                         Cancel
                     </Button>
                     <Button
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
                         onClick={handleSaveProfile}
                         disabled={saving}
                     >

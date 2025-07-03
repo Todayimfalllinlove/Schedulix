@@ -200,33 +200,33 @@ const AvailableTime = () => {
         <div className="absolute top-40 left-40 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 relative">
+      <div className="container mx-auto px-2 sm:px-4 py-8 relative">
         {/* Header */}
-        <div className="flex items-center mb-8">
-          <Link to="/add-subject" className="mr-4 hidden sm:inline-flex">
-            <Button variant="ghost" size="sm" className="hover:bg-white/20 dark:hover:bg-gray-800/20">
+        <div className="flex flex-col sm:flex-row items-center mb-8 gap-y-4 sm:gap-y-0">
+          <Link to="/add-subject" className="hidden sm:inline-flex mr-0 sm:mr-4 w-full sm:w-auto">
+            <Button variant="ghost" size="sm" className="w-full sm:w-auto hover:bg-white/20 dark:hover:bg-gray-800/20">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
           </Link>
-          <div className="flex items-center">
+          <div className="flex items-center w-full sm:w-auto justify-center sm:justify-start">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl mr-3 flex items-center justify-center shadow-lg">
               <Clock className="h-5 w-5 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Set Your Available Time</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-center sm:text-left">Set Your Available Time</h1>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <Card className="p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-2xl mb-8">
-            <div className="flex justify-between items-center mb-8">
+        <div className="max-w-4xl mx-auto w-full">
+          <Card className="p-4 sm:p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-2xl mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-y-4 sm:gap-y-0">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
                   <Calendar className="h-6 w-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Weekly Schedule</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Weekly Schedule</h2>
               </div>
-              <div className="text-right">
+              <div className="text-center sm:text-right w-full sm:w-auto">
                 <div className="text-sm text-gray-600 dark:text-gray-400">Total Available Time</div>
                 <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {getTotalHours().toFixed(1)} hours/week
@@ -240,51 +240,47 @@ const AvailableTime = () => {
                 return (
                   <div
                     key={day.key}
-                    className={`flex items-center space-x-4 p-6 border border-gray-200 dark:border-gray-700 rounded-xl transition-all duration-300 ${enabled
+                    className={`flex flex-col sm:flex-row items-center sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4 sm:p-6 border border-gray-200 dark:border-gray-700 rounded-xl transition-all duration-300 ${enabled
                         ? 'bg-white/80 dark:bg-gray-700/80 shadow-lg border-blue-200 dark:border-blue-700'
                         : 'bg-gray-50/80 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400'
                       }`}
                   >
-                    <div className="flex items-center space-x-4 min-w-[200px]">
+                    <div className="flex items-center space-x-4 min-w-[160px] sm:min-w-[200px] w-full sm:w-auto justify-center sm:justify-start">
                       <Switch
                         checked={enabled}
                         onCheckedChange={() => toggleDay(day.key)}
                       />
                       <div className="flex items-center space-x-3">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${enabled ? `bg-gradient-to-r ${day.color}` : 'bg-gray-200 dark:bg-gray-700'}`}>
-                          <span className={`text-sm font-bold ${enabled ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-                            {day.label.charAt(0)}
-                          </span>
+                          <span className={`text-sm font-bold ${enabled ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>{day.label.charAt(0)}</span>
                         </div>
-                        <Label className={`font-semibold ${enabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-                          {day.label}
-                        </Label>
+                        <Label className={`font-semibold ${enabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>{day.label}</Label>
                       </div>
                     </div>
 
                     {enabled && (
-                      <div className="flex items-center space-x-6 flex-1">
-                        <div className="flex items-center space-x-3">
+                      <div className="flex flex-col sm:flex-row items-center gap-y-2 sm:gap-y-0 sm:space-x-6 flex-1 w-full sm:w-auto">
+                        <div className="flex items-center space-x-3 w-full sm:w-auto justify-center sm:justify-start">
                           <Label htmlFor={`${day.key}-start`} className="text-sm font-medium text-gray-700 dark:text-gray-300">From:</Label>
                           <Input
                             id={`${day.key}-start`}
                             type="time"
                             value={timeSlots[day.key].startTime}
                             onChange={(e) => updateTime(day.key, "startTime", e.target.value)}
-                            className="w-36 h-10 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            className="w-full sm:w-36 h-10 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                           />
                         </div>
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-3 w-full sm:w-auto justify-center sm:justify-start">
                           <Label htmlFor={`${day.key}-end`} className="text-sm font-medium text-gray-700 dark:text-gray-300">To:</Label>
                           <Input
                             id={`${day.key}-end`}
                             type="time"
                             value={timeSlots[day.key].endTime}
                             onChange={(e) => updateTime(day.key, "endTime", e.target.value)}
-                            className="w-36 h-10 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            className="w-full sm:w-36 h-10 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                           />
                         </div>
-                        <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 text-center sm:text-left w-full sm:w-auto">
                           {(() => {
                             const start = new Date(`2000-01-01 ${timeSlots[day.key].startTime}`);
                             const end = new Date(`2000-01-01 ${timeSlots[day.key].endTime}`);
@@ -300,11 +296,11 @@ const AvailableTime = () => {
             </div>
           </Card>
 
-          <div className="text-center">
+          <div className="text-center w-full">
             <Button
               onClick={handleContinue}
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
             >
               <CheckCircle className="w-5 h-5 mr-2" />
               Create My Study Schedule
