@@ -53,9 +53,5 @@ Open [http://localhost:5173](http://localhost:5173) (or the port shown in your t
 
 - [GitHub](https://github.com/Todayimfalllinlove)
 - [LinkedIn](https://www.linkedin.com/in/me/)
+    
 
----
-
-## License
-
-MIT
