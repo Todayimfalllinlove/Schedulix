@@ -135,7 +135,7 @@ const Auth = () => {
                             <img src="/Img/logo_white.png" alt="Logo"/>
                         </div>
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                            ScheduleFlow
+                            Schedulix
                         </h1>
                         <p className="text-gray-600 dark:text-gray-400 mt-2">
                             {isLogin ? 'Welcome back! Please sign in to your account.' : 'Create your account to get started.'}
